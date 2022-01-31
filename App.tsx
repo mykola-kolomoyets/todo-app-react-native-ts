@@ -1,34 +1,60 @@
 import { useState } from 'react';
-import { Text, View, Button, TextInput } from 'react-native';
+import {
+  Text,
+  View,
+  ScrollView,
+  Button,
+  TextInput,
+  FlatList
+} from 'react-native';
 import { styles } from './App.styles';
+import { GoalItem } from './components/goal-item';
+import { Input } from './components/input';
+
+type Goal = {
+  key: string;
+  value: string;
+};
 
 export default function App() {
-  const [blocks, setBlocks] = useState<string[]>([]);
 
-  const onClick = () => {
-    setBlocks(blocks => [...blocks, `${blocks.length + 1}`]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+
+
+  const onSubmit = (enteredGoal: string) => {
+    setGoals(goals => [...goals, {
+      key: Math.random().toString(),
+      value: enteredGoal
+    }]);
   }
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder='Enter the goal'
-        />
-        <Button title="ADD" onPress={onClick} />
+      
+      <Input  
+        onSubmit={onSubmit}
+      />
+
+      <View
+        style={styles.goalsContainer}
+      >
+        {goals?.length ? (
+          <FlatList
+            data={goals}
+            keyExtractor={item => item.key}
+            renderItem={({ item }) => (
+              <GoalItem title={item.value}/>
+            )}
+          >
+          </FlatList>
+        ) : (
+          <View>
+            <Text>No goals...</Text>
+          </View>
+        )}
       </View>
 
-      <View style={styles.squareWrapper}>
-        {blocks.map((item, index) => (
-          <View
-            style={{ ...styles.square}} 
-            key={item + index}
-          >
-            <Text>{`block-${item}`}</Text>
-          </View>
-        ))}
-      </View>
+
     </View>
   );
 }
