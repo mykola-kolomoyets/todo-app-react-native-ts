@@ -24,6 +24,9 @@ export default function App() {
       return alert('Enter the goal title...');
     }
 
+    console.log(enteredGoal);
+    
+
     setGoals(goals => [...goals, {
       key: Math.random().toString(),
       value: enteredGoal
