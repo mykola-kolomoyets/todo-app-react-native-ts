@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { Button, TextInput, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Button, TextInput, View, Modal } from 'react-native';
 import { styles } from './input.styles';
 
 type InputProps = {
   onSubmit: (value: string) => void;
+  onClose: () => void;
+  visible: boolean;
 }
 
-const Input = ({ onSubmit }: InputProps) => {
+const Input = ({ onSubmit, onClose, visible }: InputProps) => {
   const [enteredGoal, setEnteredGoal] = useState('');
 
   const onGoalChange = (value: string) => {
-    setEnteredGoal(value?.length ? value : '');
+    setEnteredGoal(value);
   }
 
   const onAddGoal = () => {
@@ -19,17 +21,36 @@ const Input = ({ onSubmit }: InputProps) => {
     setEnteredGoal('');
   }
 
+  const onCancelClick = () => {
+    if (onClose) onClose();
+
+    setEnteredGoal('');
+  }
+
   return (
-  <View style={styles.inputContainer}>
-    <TextInput
-      style={styles.input}
-      value={enteredGoal}
-      onChangeText={onGoalChange}
-      placeholder='Enter the goal'
-    />
-    
-    <Button title="ADD" onPress={onAddGoal} />
-  </View>
+    <Modal 
+      visible={visible}
+      animationType='slide'
+    >
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          value={enteredGoal}
+          onChangeText={onGoalChange}
+          placeholder='Enter the goal'
+        />
+
+        <View style={styles.buttonContainer}>
+          <View style={styles.button}>
+            <Button title="Add" onPress={onAddGoal} />  
+          </View>
+
+          <View style={styles.button}>
+            <Button title="Cancel" color='red' onPress={onCancelClick} />
+          </View>
+        </View>
+      </View>
+    </Modal>
 )};
 
 export { Input };
